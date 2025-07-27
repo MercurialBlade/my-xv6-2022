@@ -1,0 +1,16 @@
+usertrap
+
+7, this value represented the syscall number that the user program invoked.
+
+user mode
+
+lw	a3,0(zero) # 0 <_entry-0x80000000>     a3
+
+The kernel crashes because it tries to access an invalid memory address—specifically, address 0—which is not mapped in the kernel’s address space.
+According to figure 3-3, address 0 is not mapped in the kernel address space, so any attempt to dereference a pointer to address 0 results in a page fault.
+This is confirmed by the value in the scause register, which indicates the cause of the trap. 
+In RISC-V, an scause value of 0xd (decimal 13) means a load page fault, meaning the processor tried to load data from an unmapped or inaccessible address (here, address 0).
+Therefore, the kernel panics because of a page fault caused by dereferencing a null pointer (*(int *)0), which is invalid memory access.
+
+"initcode\000\000\000\000\000\000\000"
+1
