@@ -1,0 +1,3 @@
+Most file-related system calls such as open, read, and write cannot be sped up using a shared page, since they involve complex interactions with the file system, including permission checks, buffering, or disk access. Their results cannot be predicted in advance by the kernel and thus cannot be prewritten into a shared read-only page. Only system calls that return simple, frequently-accessed, and static values, such as getpid() or stat(), are suitable candidates for this kind of optimization.
+
+
