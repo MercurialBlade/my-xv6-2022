@@ -12,7 +12,7 @@ sys_exit(void)
   int n;
   argint(0, &n);
   exit(n);
-  return 0;  // not reached
+  return 0; // not reached
 }
 
 uint64
@@ -43,7 +43,7 @@ sys_sbrk(void)
 
   argint(0, &n);
   addr = myproc()->sz;
-  if(growproc(n) < 0)
+  if (growproc(n) < 0)
     return -1;
   return addr;
 }
@@ -54,12 +54,13 @@ sys_sleep(void)
   int n;
   uint ticks0;
 
-
   argint(0, &n);
   acquire(&tickslock);
   ticks0 = ticks;
-  while(ticks - ticks0 < n){
-    if(killed(myproc())){
+  while (ticks - ticks0 < n)
+  {
+    if (killed(myproc()))
+    {
       release(&tickslock);
       return -1;
     }
@@ -69,12 +70,40 @@ sys_sleep(void)
   return 0;
 }
 
-
 #ifdef LAB_PGTBL
-int
-sys_pgaccess(void)
+int sys_pgaccess(void)
 {
   // lab pgtbl: your code here.
+  uint64 user_page_ptr;
+  int num_page;
+  uint64 ans_addr;
+
+  argaddr(0, &user_page_ptr);
+  argint(1, &num_page);
+  argaddr(2, &ans_addr);
+
+  if (num_page < 0 || num_page > 64)
+    return -1;
+
+  struct proc *p = myproc();
+
+  uint64 bitmap = 0;
+  int count = 0;
+  uint64 mask = 1;
+  uint64 complement = ~PTE_A;
+
+  for (uint64 page = user_page_ptr; page < user_page_ptr + num_page * PGSIZE; page += PGSIZE)
+  {
+    pte_t *pte = walk(p->pagetable, page, 0);
+    if ((*pte) & PTE_A)
+    {
+      bitmap |= (mask << count);
+      *pte = (*pte) & complement;
+    }
+    count++;
+  }
+  copyout(p->pagetable, ans_addr, (char *)&bitmap, sizeof(bitmap));
+
   return 0;
 }
 #endif

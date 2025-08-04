@@ -1,3 +1,11 @@
 Most file-related system calls such as open, read, and write cannot be sped up using a shared page, since they involve complex interactions with the file system, including permission checks, buffering, or disk access. Their results cannot be predicted in advance by the kernel and thus cannot be prewritten into a shared read-only page. Only system calls that return simple, frequently-accessed, and static values, such as getpid() or stat(), are suitable candidates for this kind of optimization.
 
 
+
+Page 0 contains the first user memory page, namely the 'text segment' page.
+
+Page 2 is mapped to a user-unaccessible page with read/write permissions, namely the 'stack guard' page.
+
+Page 1 is also readable and writable in user mode because the corresponding PTE has appropriate user and RW bits set.
+
+The third to last page (VPN 509) is a user-accessible, read-only page, namely the 'USYSCALL' page.
