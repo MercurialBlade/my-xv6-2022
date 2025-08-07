@@ -1,0 +1,14 @@
+1. Function arguments are stored in registers a0 to a7. In main's call to printf, the value 13 is in a2.
+
+2. The call to function f and g are inlined by the compiler and do not appear as jal/jalr instructions in main.
+
+3. The printf function is located at address 0x642.
+
+4. Just after the jalr to printf in main, the ra register contains: 0x34+4 = 0x38
+   Noting: The jumping distance 1554 can be calculated: 0x642-0x30=0x612
+
+5. HE110 World
+   Big-endian equivalent: i = 0x726c6400
+   No need to change 57616.
+
+6. A random value in register a2 will be printed.
